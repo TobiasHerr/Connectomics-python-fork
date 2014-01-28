@@ -151,7 +151,9 @@ double AutoCorrelation(double* data, const long samples, const long lag=0, bool 
 double AutoCorrelationTimeScale(double* data, const long samples, const long max_lag, IOSTREAMD);
 
 void write_result(double** const array, long size, std::string outputfile_results_name, IOSTREAMD, TECausalityFileFormats format=MX);
+void write_result(double** const array, long size, std::string outputfile_results_name, std::string chalearn_tag, IOSTREAMD, TECausalityFileFormats format=MX);
 void write_multidim_result(double*** const array, unsigned int dimens, long size, std::string outputfile_results_name, IOSTREAMD, TECausalityFileFormats format=MX);
+void write_multidim_result(double*** const array, unsigned int dimens, long size, std::string outputfile_results_name, std::string chalearn_tag, IOSTREAMD, TECausalityFileFormats format=MX);
 
 std::string bool2textMX(bool value);
 std::string vector2textMX(long unsigned* vec, int len);

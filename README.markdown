@@ -17,6 +17,83 @@ It also contains four methods of estimating TE and GTE without binning:
 - *te-symbolic* (experimental) based on: M. Staniek and K. Lehnertz, [Symbolic Transfer Entropy](http://link.aps.org/doi/10.1103/PhysRevLett.100.158101), Physical Review Letters, 2008.
 
 
+## Step by step installation guide
+
+### Ubuntu (precise server)
+
+If you are on a fresh install of ubuntu server you might need some very
+basic stuff, like make, rake, gcc, g++ and git, so install them:
+
+    sudo apt-get install make, rake, gcc, g++, git
+
+Now let's start with the real dependencies, first boost:
+
+    sudo apt-get install libboost-dev
+
+Continue with the GSL:
+
+    sudo apt-get install libgsl0-dev
+
+And finally SimKernel. You can either download it or just clone the
+repository:
+
+    git clone https://github.com/ChristophKirst/SimKernel.git
+    cd SimKernel
+    make lib
+    sudo make install
+
+Now you should have SimKernel installed as a library at /usr/local. It
+is time to install TE-Causality:
+
+    cd ~
+    git clone https://github.com/olavolav/te-causality.git
+    cd te-causality
+
+Since we haven't installed yaml-cpp (because we don't need that
+functionality) we have to undefine something in the file
+`te-datainit.h`, change line 37:
+
+    #define ENABLE_YAML_IMPORT_AT_COMPILE_TIME
+
+for:
+
+    #undef ENABLE_YAML_IMPORT_AT_COMPILE_TIME
+
+To directly have outputs compatible with the Challenge we also need to
+edit something in the causality files. Here we will only do it for
+te-extended. So edit `transferentropy-sim/te-extended.cpp` and change
+line 42:
+
+    #undef FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
+
+for:
+
+    #define FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
+
+We are almost done. We still need to change somethign in the rakefile so
+edit `transferentropy-sim/Rakefile` and change line 32:
+
+    ld_flags_basic = "-lgsl -lgslcblas -lm -lyaml-cpp -L. -lsim"
+
+for:
+
+  ld_flags_basic = "-lgsl -lgslcblas -lm -L. -lsim -lrt"
+
+We have removed the yaml-cpp dependency and added the rt library. We are 
+all set! time to compile:
+
+    cd transferentropy-sim
+    rake te-extended
+
+Now put the fluorescence files, the te-extended executable and the
+control.txt file together. Modify the control.txt file so it reads the
+correct fluorescence file and uses the desired output and run it with:
+
+    ./te-extended control.txt
+
+Voila! After a few hours you should get the results.
+
+
 
 ## Dependencies
 

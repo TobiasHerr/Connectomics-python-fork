@@ -1680,6 +1680,11 @@ double AutoCorrelationTimeScale(double* data, const long samples, const long max
 
 void write_result(double** const array, long size, std::string outputfile_results_name, IOSTREAMH, TECausalityFileFormats format)
 {
+  write_result(array, size, outputfile_results_name, NULL, output, format);
+};
+
+void write_result(double** const array, long size, std::string outputfile_results_name, std::string chalearn_tag, IOSTREAMH, TECausalityFileFormats format)
+{
   char* name = new char[outputfile_results_name.length()+1];
   strcpy(name,outputfile_results_name.c_str());
   ofstream fileout1(name);
@@ -1720,7 +1725,7 @@ void write_result(double** const array, long size, std::string outputfile_result
     case CHALEARN:
       for(unsigned int j=0; j<size; j++) {
         for(unsigned int i=0; i<size; i++) {
-          fileout1 <<size<<"_"<<i<<"_"<<j<<": "<<(double)array[j][i]<<endl;
+          fileout1 <<chalearn_tag<<"_"<<i<<"_"<<j<<": "<<(double)array[j][i]<<endl;
         }
       }
       break;
@@ -1734,6 +1739,11 @@ void write_result(double** const array, long size, std::string outputfile_result
 
 
 void write_multidim_result(double*** const array, unsigned int dimens, long size, std::string outputfile_results_name, IOSTREAMH, TECausalityFileFormats format)
+{
+  write_multidim_result(array, dimens, size, outputfile_results_name, NULL, output, format);
+};
+
+void write_multidim_result(double*** const array, unsigned int dimens, long size, std::string outputfile_results_name, std::string chalearn_tag, IOSTREAMH, TECausalityFileFormats format)
 {
   char* name = new char[outputfile_results_name.length()+1];
   strcpy(name,outputfile_results_name.c_str());
@@ -1782,7 +1792,7 @@ void write_multidim_result(double*** const array, unsigned int dimens, long size
     case CHALEARN:
       for(unsigned int j=0; j<size; j++) {
         for(unsigned int i=0; i<size; i++) {
-          fileout1 <<size<<"_"<<i<<"_"<<j<<": ";
+          fileout1 <<chalearn_tag<<"_"<<i<<"_"<<j<<": ";
           for(int k=0; k<dimens; k++) {
             if(k>0) fileout1<<", ";
             fileout1 <<(double)array[j][i][k];

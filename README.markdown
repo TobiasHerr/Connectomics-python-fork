@@ -158,12 +158,12 @@ If you want more info about how to set the control file read the
 and further down here.
 
 If everything went right you sould get a scores file called
-`scores_iNet1_Size100_CC03inh_2.csv` with the scores in Kaggle format.
+`scores_iNet1_Size100_CC03inh_1.csv` with the scores in Kaggle format.
 
 Now if you use MATLAB you could load the scores with something like:
 
 ```matlab
-scoresKaggle = dlmread("scores_iNet1_Size100_CC03inh_2.csv",',',1,1);
+scoresKaggle = dlmread('scores_iNet1_Size100_CC03inh_1.csv',',',1,1);
 % Scores should be a complete square matrix, so let's hack it back to
 % matrix form
 scores = zeros(sqrt(length(scoresKaggle)));
@@ -179,7 +179,7 @@ end
 To load the network you can just do:
 
 ```matlab
-networkData = load("network_iNet1_Size100_CC03inh.txt");
+networkData = load('network_iNet1_Size100_CC03inh.txt');
 N = max(max(networkData(:,1:2)));
 network.RS = sparse(networkData(:,1), networkData(:,2), networkData(:,3), N, N);
 network.RS(network.RS < 0) = 0;
@@ -193,7 +193,9 @@ function:
 ```matlab
 [AUC, FPR, TPR, TPRatMark, raw] = calculateROC(network, scores, 'plot', true);
 ```
-And you are done!
+
+Voila! You are done! This should give you an AUC around 0.75.
+
 
 ## Dependencies
 

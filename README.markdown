@@ -61,12 +61,8 @@ for:
 
 To directly have outputs compatible with the Challenge we also need to
 edit something in the causality files. Here we will only do it for
-te-extended. So edit `transferentropy-sim/te-extended.cpp` and change
-line 42:
-
-    #undef FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
-
-for:
+te-extended. So edit `transferentropy-sim/te-extended.cpp` and make sure
+line 42 reads:
 
     #define FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
 
@@ -91,7 +87,7 @@ its contents:
 
     tar -xvf small.tgz
 
-And copy the te-extended executable to the same folder and create
+Also copy the `te-extended` executable to the same folder and create
 the following control file `control.txt`:
 
 ```c++
@@ -164,7 +160,40 @@ and further down here.
 If everything went right you sould get a scores file called
 `scores_iNet1_Size100_CC03inh_2.csv` with the scores in Kaggle format.
 
+Now if you use MATLAB you could load the scores with something like:
 
+```matlab
+scoresKaggle = dlmread("scores_iNet1_Size100_CC03inh_2.csv",',',1,1);
+% Scores should be a complete square matrix, so let's hack it back to
+% matrix form
+scores = zeros(sqrt(length(scoresKaggle)));
+cidx = 1;
+for j = 1:length(scores)
+    for i = 1:length(scores)
+        scores(i,j) = scoresKaggle(cidx);
+        cidx = cidx+1;
+    end
+end
+```
+
+To load the network you can just do:
+
+```matlab
+networkData = load("network_iNet1_Size100_CC03inh.txt");
+N = max(max(networkData(:,1:2)));
+network.RS = sparse(networkData(:,1), networkData(:,2), networkData(:,3), N, N);
+network.RS(network.RS < 0) = 0;
+% No need to be sparse for AUC and ROC computations
+network.RS = full(network.RS);
+```
+
+And now you can compute the AUC with the provided `calculateROC`
+function:
+
+```matlab
+[AUC, FPR, TPR, TPRatMark, raw] = calculateROC(network, scores, 'plot', true);
+```
+And you are done!
 
 ## Dependencies
 

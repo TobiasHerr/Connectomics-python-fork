@@ -1680,7 +1680,7 @@ double AutoCorrelationTimeScale(double* data, const long samples, const long max
 
 void write_result(double** const array, long size, std::string outputfile_results_name, IOSTREAMH, TECausalityFileFormats format)
 {
-  write_result(array, size, outputfile_results_name, NULL, output, format);
+  write_result(array, size, outputfile_results_name, "", output, format);
 };
 
 void write_result(double** const array, long size, std::string outputfile_results_name, std::string chalearn_tag, IOSTREAMH, TECausalityFileFormats format)
@@ -1742,7 +1742,7 @@ void write_result(double** const array, long size, std::string outputfile_result
 
 void write_multidim_result(double*** const array, unsigned int dimens, long size, std::string outputfile_results_name, IOSTREAMH, TECausalityFileFormats format)
 {
-  write_multidim_result(array, dimens, size, outputfile_results_name, NULL, output, format);
+  write_multidim_result(array, dimens, size, outputfile_results_name, "", output, format);
 };
 
 void write_multidim_result(double*** const array, unsigned int dimens, long size, std::string outputfile_results_name, std::string chalearn_tag, IOSTREAMH, TECausalityFileFormats format)

@@ -236,7 +236,7 @@ public:
     
     sim.get("inputfile",inputfile_name,"");
     sim.get("outputfile",outputfile_results_name);
-    sim.get("NetworkTag",chalearn_tag);
+    sim.get("NetworkTag",chalearn_tag,"");
     sim.get("outputparsfile",outputfile_pars_name);
     sim.get("spikeindexfile",spikeindexfile_name,"");
     sim.get("spiketimesfile",spiketimesfile_name,"");

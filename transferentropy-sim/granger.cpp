@@ -42,7 +42,8 @@
 #define REPORTS 25
 #undef SHOW_DETAILED_PROGRESS
 
-#define SEPARATED_OUTPUT
+#undef SEPARATED_OUTPUT
+#define FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
 
 using namespace std;
 
@@ -77,6 +78,7 @@ public:
   string inputfile_name;
   string outputfile_results_name;
   string outputfile_pars_name;
+  string chalearn_tag;
   string spikeindexfile_name, spiketimesfile_name;
   string FluorescenceModel;
 
@@ -103,6 +105,7 @@ public:
   int SourceMarkovOrder, TargetMarkovOrder, MarkovOrder;
   
   bool ContinueOnErrorQ;
+  bool FormatOutputForMathematica;
   bool skip_the_rest;
   
   // bool AutoBinNumberQ;
@@ -180,6 +183,7 @@ public:
     sim.get("TargetMarkovOrder",TargetMarkovOrder,1);
     assert(TargetMarkovOrder==SourceMarkovOrder);
     MarkovOrder = SourceMarkovOrder; // we will here assume equal Markov order for ease of use
+    sim.get("FormatOutputForMathematica", FormatOutputForMathematica, true);
 
     sim.get("StartSampleIndex",StartSampleIndex,1);
     assert(StartSampleIndex>=MarkovOrder && StartSampleIndex<samples);
@@ -189,6 +193,7 @@ public:
     
     sim.get("inputfile",inputfile_name,"");
     sim.get("outputfile",outputfile_results_name);
+    sim.get("NetworkTag",chalearn_tag,"");
     sim.get("outputparsfile",outputfile_pars_name);
     sim.get("spikeindexfile",spikeindexfile_name,"");
     sim.get("spiketimesfile",spiketimesfile_name,"");
@@ -435,9 +440,25 @@ public:
   void finalize(Sim& sim) {
     if(!skip_the_rest) {
 #ifdef SEPARATED_OUTPUT
-      write_multidim_result(xresult,globalbins,size,outputfile_results_name,sim);
+      if(FormatOutputForMathematica) {
+        write_multidim_result(xresult, globalbins, size, outputfile_results_name, sim, MX);
+      } else {
+#ifdef FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
+        write_multidim_result(xresult, globalbins, size, outputfile_results_name, chalearn_tag, sim, CHALEARN);
 #else
-      write_result(xresult,size,outputfile_results_name,sim);
+        write_multidim_result(xresult, globalbins, size, outputfile_results_name, sim, CSV);
+#endif
+      }
+#else
+      if(FormatOutputForMathematica) {
+        write_result(xresult, size, outputfile_results_name, sim, MX);
+      } else {
+#ifdef FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
+        write_result(xresult, size, outputfile_results_name, chalearn_tag, sim, CHALEARN);
+#else
+        write_result(xresult, size, outputfile_results_name, sim, CSV);
+#endif
+      }
 #endif
       write_parameters();
 
@@ -528,7 +549,11 @@ public:
     fileout1 <<", GlobalConditioningLevel->"<<GlobalConditioningLevel;
     fileout1 <<", TargetMarkovOrder->"<<TargetMarkovOrder;
     fileout1 <<", SourceMarkovOrder->"<<SourceMarkovOrder;
+    fileout1 <<", FormatOutputForMathematica->"<<bool2textMX(FormatOutputForMathematica);
     
+#ifdef FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
+    fileout1 <<", NetworkTag->\""<<chalearn_tag<<"\"";
+#endif
     // fileout1 <<", AutoBinNumberQ->"<<bool2textMX(AutoBinNumberQ);
     fileout1 <<", AutoConditioningLevelQ->"<<bool2textMX(AutoConditioningLevelQ);
     

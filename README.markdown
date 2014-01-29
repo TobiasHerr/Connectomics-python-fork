@@ -61,7 +61,8 @@ for:
 
 To directly have outputs compatible with the Challenge we also need to
 edit something in the causality files. Here we will only do it for
-te-extended. So edit `transferentropy-sim/te-extended.cpp` and make sure
+te-extended (but you should do the same with xcorr and granger if you
+want to try these algorithms), so edit `transferentropy-sim/te-extended.cpp` and make sure
 line 42 reads:
 
     #define FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
@@ -155,7 +156,9 @@ second conditioning level you can run:
 
 If you want more info about how to set the control file read the
 [SimKernel documentation](https://github.com/ChristophKirst/SimKernel)
-and further down here.
+and further down here. Also, the same control file should work for the
+cross correlation and granger causality algorithms, just change the
+executable.
 
 If everything went right you sould get a scores file called
 `scores_iNet1_Size100_CC03inh_1.csv` with the scores in Kaggle format.
@@ -195,6 +198,39 @@ function:
 ```
 
 Voila! You are done! This should give you an AUC around 0.75.
+
+
+### OS X (Lion)
+
+These instructions should work with any version of OS X prior to
+Mavericks. In Mavericks you might run into some issues due to the
+changes in the std library.
+
+Let's start by downloading the XCode command line tools (in case you don't have them already). Go to [http://developer.apple.com/downloads/index.action](http://developer.apple.com/downloads/index.action), and sign in with your Apple ID (the download's free). In the pane on the left, search for "command line tools" and choose the package appropriate to your version of OS X. Requires Mac OS X 10.7.3 or later.
+
+We will install all the dependencies using brew, so let's install it
+first. Open a terminal and run:
+
+    ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+
+This should get brew installed, remember to also run `brew doctor` as
+suggested in the brew install. Now we can proceed with the remaining
+dependencies, so let's install boost and gsl:
+
+    brew install boost gsl
+
+The remaining instructions are exactly the same as the Ubuntu ones, so
+you can continue in there with the SimKernel install
+(where it says `git clone https://github.com/ChristophKirst/SimKernel.git`), with
+only one exception, when you modify the line 32 of the Rakefile:
+
+    ld_flags_basic = "-lgsl -lgslcblas -lm -lyaml-cpp -L. -lsim -lrt"
+
+it should become:
+
+    ld_flags_basic = "-lgsl -lgslcblas -lm -L. -lsim"
+
+Since we the rt library doesn't exist in OS X.
 
 
 ## Dependencies

@@ -29,7 +29,7 @@ maketemp_path = "./maketemp"
 enable_mpi = false
 
 
-ld_flags_basic = "-lgsl -lgslcblas -lm -lyaml-cpp -L. -lsim"
+ld_flags_basic = "-lgsl -lgslcblas -lm -lyaml-cpp -L. -lsim -lrt"
 ld_flags_flann = "-lflann_cpp"
 obj = %W{ #{maketemp_path}/olav.o #{maketemp_path}/te-datainit.o #{maketemp_path}/miniprofiler.o }
 

@@ -43,13 +43,13 @@ repository:
     sudo make install
 
 Now you should have SimKernel installed as a library at /usr/local. It
-is time to install TE-Causality:
+is time to install TE-Causality (let's use the challenge branch):
 
     cd ~
-    git clone https://github.com/olavolav/te-causality.git
+    git clone -b connectomics_challenge https://github.com/dherkova/te-causality.git
     cd te-causality
 
-Since we haven't installed yaml-cpp (because we don't need that
+Since we have skipped installing yaml-cpp (because we don't need that
 functionality) we have to undefine something in the file
 `te-datainit.h`, change line 37:
 
@@ -70,28 +70,99 @@ for:
 
     #define FORMAT_TEXT_OUTPUT_FOR_ML_CHALLENGE
 
-We are almost done. We still need to change somethign in the rakefile so
+We are almost done. We still need to change something in the rakefile so
 edit `transferentropy-sim/Rakefile` and change line 32:
 
-    ld_flags_basic = "-lgsl -lgslcblas -lm -lyaml-cpp -L. -lsim"
+    ld_flags_basic = "-lgsl -lgslcblas -lm -lyaml-cpp -L. -lsim -lrt"
 
 for:
 
-  ld_flags_basic = "-lgsl -lgslcblas -lm -L. -lsim -lrt"
+    ld_flags_basic = "-lgsl -lgslcblas -lm -L. -lsim -lrt"
 
-We have removed the yaml-cpp dependency and added the rt library. We are 
-all set! time to compile:
+We have removed the yaml-cpp dependency. We are  all set! time to compile:
 
     cd transferentropy-sim
     rake te-extended
 
-Now put the fluorescence files, the te-extended executable and the
-control.txt file together. Modify the control.txt file so it reads the
-correct fluorescence file and uses the desired output and run it with:
+Now let's try it out. First download some datasets, let's start with the
+small networks, download the data set [small](https://www.kaggle.com/c/connectomics/download/small.tgz)
+and store it somewhere (let's call it the challenge folder). Now extract
+its contents:
+
+    tar -xvf small.tgz
+
+And copy the te-extended executable to the same folder and create
+the following control file `control.txt`:
+
+```c++
+// -- SimKernel control file --
+
+size = 100;
+
+FormatOutputForMathematica = False;
+
+// word length
+p = 2;
+SourceMarkovOrder = p;
+TargetMarkovOrder = p;
+StartSampleIndex = p;
+globalbins = 2;
+
+bins = 2;
+binEdges = {-10.0, 0.12, 10.0};
+
+// Data paths
+// basedir = "/Users/dherkova/Dropbox/Projects/GTE-Challenge/tests/"; // for UNIX-QSub
+basedir = ""; // for local
+outputpath = basedir+"";
+
+// Input data
+baseFile = "iNet1_Size100_CC03inh";
+inputfile = basedir + "fluorescence_"+baseFile+".txt";
+
+// Tag used for the kaggle format
+NetworkTag = "test";
+
+samples = 150000;
+
+HighPassFilterQ = True;
+InstantFeedbackTermQ = True;
+IncludeGlobalSignalQ = True;
+
+// RelativeGlobalConditioningLevelQ = False;
+//condList = Table[i*0.025, {i, 1, 25, 1}];
+//iCond = Iterator[i, {i, 0, Length[condList]-1}];
+
+conditioningList = {0.05, 0.10};
+iC = Iterator[j,{j,0,Length[conditioningList]-1,1}];
+GlobalConditioningLevel = conditioningList[[iC]];
+CLLabel = ToString[iC];
+
+// Output files
+fileindex = ToString[Iteration[]];
+outputfile = outputpath+"scores_"+baseFile+"_"+CLLabel+".csv";
+outputparsfile = outputpath+baseFile+"_"+CLLabel+"_pars.mx";
+```
+
+Pay special attention to the sections in the control file regardin the
+folders, input and output files and modify them accordingly. Now if you
+run:
 
     ./te-extended control.txt
 
-Voila! After a few hours you should get the results.
+Everything should work, the program should do two iterations over 2
+different conditioning levels (as defined by the conditioningList
+iterator in the control file). If you only want to iterate over the
+second conditioning level you can run:
+
+    ./te-extended control.txt 2
+
+If you want more info about how to set the control file read the
+[SimKernel documentation](https://github.com/ChristophKirst/SimKernel)
+and further down here.
+
+If everything went right you sould get a scores file called
+`scores_iNet1_Size100_CC03inh_2.csv` with the scores in Kaggle format.
 
 
 

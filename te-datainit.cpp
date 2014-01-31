@@ -1727,7 +1727,7 @@ void write_result(double** const array, long size, std::string outputfile_result
       // Neuron idx should start at 1
       for(unsigned int j=0; j<size; j++) {
         for(unsigned int i=0; i<size; i++) {
-          fileout1 <<chalearn_tag<<"_"<<i+1<<"_"<<j+1<<", "<<(double)array[j][i]<<endl;
+          fileout1 <<chalearn_tag<<"_"<<j+1<<"_"<<i+1<<", "<<(double)array[j][i]<<endl;
         }
       }
       break;
@@ -1797,7 +1797,7 @@ void write_multidim_result(double*** const array, unsigned int dimens, long size
       for(unsigned int j=0; j<size; j++) {
         for(unsigned int i=0; i<size; i++) {
           // Neuron idx should start at 1
-          fileout1 <<chalearn_tag<<"_"<<i+1<<"_"<<j+1<<", ";
+          fileout1 <<chalearn_tag<<"_"<<j+1<<"_"<<i+1<<", ";
           for(int k=0; k<dimens; k++) {
             if(k>0) fileout1<<", ";
             fileout1 <<(double)array[j][i][k];

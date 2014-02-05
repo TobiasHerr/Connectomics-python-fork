@@ -160,7 +160,18 @@ and further down here. Also, the same control file should work for the
 cross correlation and granger causality algorithms, just change the
 executable.
 
-If everything went right you sould get a scores file called
+On a side note, if you want to run this code on the bigger networks provided in the
+challenge (the ones with 1000 neurons) you might want to change the
+conditioning level to get good reconstructions, something like:
+
+    conditioningList = {0.15, 0.20};
+
+should work better. If you want to understand how the conditioning is
+set you might want to check out the [paper](http://www.ploscompbiol.org/article/info%3Adoi%2F10.1371%2Fjournal.pcbi.1002653).
+
+
+
+If everything went right with the original run you sould get a scores file called
 `scores_iNet1_Size100_CC03inh_1.csv` with the scores in Kaggle format.
 
 Now if you use MATLAB you could load the scores with something like:
